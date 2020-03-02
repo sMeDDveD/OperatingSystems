@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <cstring>
 
 namespace EmployeeIO
 {
@@ -28,7 +29,7 @@ namespace EmployeeIO
 
 		Employee e{};
 
-		strcpy_s(e.name, name.c_str());
+		strcpy(e.name, name.c_str());
 		e.hours = hours;
 		e.num = num;
 
