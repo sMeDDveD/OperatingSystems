@@ -40,6 +40,7 @@ int main()
 
 	Subprocess creator("Creator");
 	creator.SetArgs(filename, numberOfRecords);
+	//creator.SetArrayArgs({ "Path", filename, std::to_string(numberOfRecords) });
 	try
 	{
 		creator.CreateSubprocess();
@@ -58,6 +59,7 @@ int main()
 
 	Subprocess reporter("Reporter");
 	reporter.SetArgs(filename, reportName, cost);
+	//creator.SetArrayArgs({ "Path", filename, reportName, std::to_string(cost) });
 	try
 	{
 		reporter.CreateSubprocess();

@@ -1,5 +1,9 @@
 #include "Subprocess.h"
-
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <iterator>
 
 Subprocess::Subprocess(const std::string& processName)
 {
@@ -9,17 +13,21 @@ Subprocess::Subprocess(const std::string& processName)
 	ZeroMemory(&processInfo, sizeof processInfo);
 }
 
-void Subprocess::SetArrayArgs(char* argv[])
+void Subprocess::SetArrayArgs(const std::initializer_list<std::string>& args)
 {
-	
+	std::vector<std::string> lines(args);
+	std::vector<const char*> starts;
+	transform(lines.begin(), lines.end(), back_inserter(starts), mem_fn(&std::string::c_str));
+	starts.emplace_back(NULL);
+	argv = const_cast<char**>(&starts.front());
 }
 
 void Subprocess::CreateSubprocess(bool waiting)
 {
 	if (!CreateProcess(nullptr,						// No module name (use command line)
 	                   const_cast<LPSTR>(arguments.str().c_str()), // Command line
-	                   nullptr,					// Process handle not inheritable
 	                   nullptr,					// Thread handle not inheritable
+	                   nullptr,					// Process handle not inheritable
 	                   FALSE,						// Set handle inheritance to FALSE
 	                   CREATE_NEW_CONSOLE,			// No creation flags
 	                   nullptr,						// Use parent's environment block

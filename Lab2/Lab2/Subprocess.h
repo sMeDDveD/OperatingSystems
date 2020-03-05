@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <windows.h>
+#include <cstdarg>
 
 //#ifdef __linux__
 //
@@ -23,9 +24,10 @@ public:
 	STARTUPINFO startupInfo{};
 	PROCESS_INFORMATION processInfo{};
 
-	char* argv[];
+	char** argv{};
 
 	explicit Subprocess(const std::string& processName);
+	void SetArrayArgs(const std::initializer_list<std::string>& args);
 
 	template <typename ...Args, typename T>
 	void SetArgs(const T& head, const Args&... args)
@@ -34,8 +36,7 @@ public:
 		return SetArgs(args...);
 	}
 
-	void SetArrayArgs(char* argv[]);
-
+	
 	void CreateSubprocess(bool waiting = true);
 	~Subprocess();
 private:
