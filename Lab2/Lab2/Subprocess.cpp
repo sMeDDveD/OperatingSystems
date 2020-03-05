@@ -1,60 +1,47 @@
 #include "Subprocess.h"
 
 
-Subprocess::Subprocess(const std::string& processName)
-{
-	arguments << processName << " ";
-	ZeroMemory(&startupInfo, sizeof startupInfo);
-	startupInfo.cb = sizeof startupInfo;
-	ZeroMemory(&processInfo, sizeof processInfo);
+#include <string>
+#include <utility>
+#include <vector>
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <wait.h>
+
+Subprocess::Subprocess(std::string processName) : processName(std::move(processName)) {
 }
 
-void Subprocess::CreateSubprocess(bool waiting)
-{
-	if (!CreateProcess(nullptr,						// No module name (use command line)
-	                   const_cast<LPSTR>(arguments.str().c_str()), // Command line
-	                   nullptr,					// Process handle not inheritable
-	                   nullptr,					// Thread handle not inheritable
-	                   FALSE,						// Set handle inheritance to FALSE
-	                   CREATE_NEW_CONSOLE,			// No creation flags
-	                   nullptr,						// Use parent's environment block
-	                   nullptr,					// Use parent's starting directory 
-	                   &startupInfo,							// Pointer to STARTUPINFO structure
-	                   &processInfo)							// Pointer to PROCESS_INFORMATION structure
-	)
-	{
-		throw std::runtime_error(GetErrorDescription());
-	}
-
-	if (waiting)
-	{
-		WaitForSingleObject(processInfo.hProcess, INFINITE);
-	}
+void Subprocess::SetArrayArgs(const std::initializer_list<std::string> &list) {
+    argv.push_back(const_cast<char * >(("./" + processName).c_str()));
+    for (const auto &arg : list) {
+        argv.push_back(const_cast<char *>(arg.c_str()));
+    }
+    // std::transform(list.begin(), list.end(), std::back_inserter(argv), mem_fn(&std::string::c_str)); TODO
+    argv.push_back(nullptr);
 }
 
-Subprocess::~Subprocess()
-{
-	CloseHandle(processInfo.hProcess);
-	CloseHandle(processInfo.hThread);
+void Subprocess::CreateSubprocess(bool waiting) {
+    pid_t pid = fork();
+
+    if (pid == -1) {
+        throw std::runtime_error("Unable to fork");
+    } else {
+        if (pid > 0) {
+            int status;
+            waitpid(pid, &status, 0);
+        } else {
+            if (execv(processName.c_str(), argv.data()) == -1) {
+                throw std::runtime_error("Unable to exec");
+            }
+        }
+    }
 }
 
-std::string Subprocess::GetErrorDescription()
-{
-	LPVOID lpMsgBuf;
-	const DWORD dw = GetLastError();
 
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr,
-		dw,
-		MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT),
-		reinterpret_cast<LPTSTR>(&lpMsgBuf),
-		0, nullptr);
+Subprocess::~Subprocess() = default;
 
-	std::string retValue = static_cast<LPTSTR>(lpMsgBuf);
-	LocalFree(lpMsgBuf);
 
-	return retValue;
+std::string Subprocess::GetErrorDescription() {
+    return "Something went wrong";
 }

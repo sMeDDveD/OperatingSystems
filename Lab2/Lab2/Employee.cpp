@@ -4,36 +4,33 @@
 #include <string>
 #include <cstring>
 
-namespace EmployeeIO
-{
-	void Write(const Employee& employee, std::ofstream& output, double salaryPerHour)
-	{
-		output << employee.num << " " << employee.name << " " << employee.hours << " "
-			<< employee.hours * salaryPerHour << std::endl;
-	}
+namespace EmployeeIO {
+    void Write(const Employee &employee, std::ofstream &output, double salaryPerHour) {
+        output << employee.num << " " << employee.name << " " << employee.hours << " "
+               << employee.hours * salaryPerHour << std::endl;
+    }
 
-	Employee Read()
-	{
-		std::string name;
-		int num;
-		double hours;
+    Employee Read(std::istream &input, std::ostream &output) {
+        std::string name;
+        int num;
+        double hours;
 
-		std::cout << "Enter employee's ID: " << std::endl;
-		std::cin >> num;
+        output << "Enter employee's ID: " << std::endl;
+        input >> num;
 
-		std::cout << "Enter employee's name: " << std::endl;
-		std::cin >> name;
+        output << "Enter employee's name: " << std::endl;
+        input >> name;
 
-		std::cout << "Enter employee's hours: " << std::endl;
-		std::cin >> hours;
+        output << "Enter employee's hours: " << std::endl;
+        input >> hours;
 
-		Employee e{};
 
-		strcpy(e.name, name.c_str());
-		e.hours = hours;
-		e.num = num;
+        Employee e{};
 
-		return e;
-	}
+        strcpy(e.name, name.c_str());
+        e.hours = hours;
+        e.num = num;
+        return e;
+    }
 
 }
