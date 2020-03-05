@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
 		for (size_t i = 0; i < numberOfRecords; ++i)
 		{
-			Employee employee = EmployeeIO::Read();
+			Employee employee = EmployeeIO::Read(std::cin, std::cout);
 			EmployeeIO::Serialize(employee, out);
 		}
 

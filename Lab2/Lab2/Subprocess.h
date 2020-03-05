@@ -4,6 +4,16 @@
 #include <string>
 #include <windows.h>
 
+//#ifdef __linux__
+//
+//#include <unistd.h>
+//
+//#elif _WIN32
+//
+//#include <windows.h>
+//
+//#endif
+
 class Subprocess final
 {
 public:
@@ -12,6 +22,8 @@ public:
 
 	STARTUPINFO startupInfo{};
 	PROCESS_INFORMATION processInfo{};
+
+	char* argv[];
 
 	explicit Subprocess(const std::string& processName);
 
@@ -22,10 +34,12 @@ public:
 		return SetArgs(args...);
 	}
 
+	void SetArrayArgs(char* argv[]);
+
 	void CreateSubprocess(bool waiting = true);
 	~Subprocess();
 private:
-
+	
 	static void SetArgs()
 	{
 	}

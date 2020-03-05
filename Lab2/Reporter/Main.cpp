@@ -21,7 +21,7 @@ void MakeReport(
 		Employee current = EmployeeIO::Deserialize(input);
 		if (input.gcount() == sizeof(Employee))
 		{
-			EmployeeIO::Write(current, report, costPerHour); // SOLID
+			EmployeeIO::Write(current, report, costPerHour); // SOLID TODO
 		}
 	}
 }

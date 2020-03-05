@@ -9,6 +9,11 @@ Subprocess::Subprocess(const std::string& processName)
 	ZeroMemory(&processInfo, sizeof processInfo);
 }
 
+void Subprocess::SetArrayArgs(char* argv[])
+{
+	
+}
+
 void Subprocess::CreateSubprocess(bool waiting)
 {
 	if (!CreateProcess(nullptr,						// No module name (use command line)
@@ -37,6 +42,7 @@ Subprocess::~Subprocess()
 	CloseHandle(processInfo.hProcess);
 	CloseHandle(processInfo.hThread);
 }
+
 
 std::string Subprocess::GetErrorDescription()
 {

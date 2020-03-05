@@ -26,5 +26,5 @@ namespace EmployeeIO
 
 	
 	void Write(const Employee& employee, std::ofstream& output, double salaryPerHour);
-	Employee Read();
+	Employee Read(std::istream& input, std::ostream& output);
 }
