@@ -1,51 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <algorithm>
-#include <Windows.h>
 #include "Thread.h"
-
-DWORD WINAPI PrintMinMax(LPVOID lpParam)
-{
-	const auto arr = static_cast<std::vector<int>*>(lpParam);
-
-	int min = (*arr)[0];
-	int max = min;
-
-	for (auto now : *arr)
-	{
-		if (min > now)
-		{
-			min = now;
-		}
-		else
-		{
-			if (max < now)
-			{
-				max = now;
-			}
-		}
-
-		Sleep(7);
-	}
-
-	std::cout << min << " " << max << std::endl;
-
-	return 0;
-}
-
-DWORD WINAPI PrintAverage(LPVOID lpParam)
-{
-	const auto arr = static_cast<std::vector<int>*>(lpParam);
-
-	int s = 0;
-	for (auto now : *arr)
-	{
-		s += now;
-		Sleep(12);
-	}
-
-	return s / arr->size();
-}
+#include "Functions.h"
 
 std::vector<int> GetArray()
 {
@@ -72,14 +28,25 @@ int main()
 
 	try
 	{
-		const Thread min_max(PrintMinMax, &arr);
-		const Thread average(PrintAverage, &arr);
+		Thread::Data<std::vector<int>, std::pair<int, int>> minMaxData = {arr};
+		Thread::Data<std::vector<int>, double> averageData = {arr};
+		const Thread min_max(Functions::MinMax, &minMaxData);
+		const Thread average(Functions::Average, &averageData);
 
 		min_max.Start();
 		average.Start();
 
 		min_max.Join();
 		average.Join();
+
+		arr[minMaxData.ret.first] = arr[minMaxData.ret.second] = static_cast<int>(averageData.ret);
+
+		for (auto now : arr)
+		{
+			std::cout << now << " ";
+		}
+
+		std::cout << std::endl;
 	}
 	catch (const std::exception& e)
 	{

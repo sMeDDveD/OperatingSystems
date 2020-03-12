@@ -1,6 +1,5 @@
 #pragma once
 #include  <Windows.h>
-#include <exception>
 #include <stdexcept>
 
 class Thread final
@@ -9,6 +8,13 @@ class Thread final
 	DWORD dwThreadID{};
 public:
 	using Function = LPTHREAD_START_ROUTINE;
+	
+	template<typename In, typename Out>
+	struct Data
+	{
+		In arg;
+		Out ret{};
+	};
 	
 	explicit Thread(Function f, void* pArgs);
 	

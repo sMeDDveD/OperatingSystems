@@ -20,7 +20,7 @@ Thread::Thread(Function f, void* pArgs)
 
 void Thread::Start() const
 {
-	if (ResumeThread(hThread) == -1)
+	if (ResumeThread(hThread) == -1)  // NOLINT(clang-diagnostic-sign-compare)
 	{
 		throw std::runtime_error("Cannot start thread: " + GetErrorDescription());
 	}
