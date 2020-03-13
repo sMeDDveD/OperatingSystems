@@ -1,6 +1,11 @@
 #include "Functions.h"
 
+
+
 namespace Functions {
+
+	static const int minMaxSleepTime = 7;
+	static const int averageSleepTime = 12;
 
 	DWORD WINAPI MinMax(LPVOID lpParam)
 	{
@@ -29,7 +34,7 @@ namespace Functions {
 				}
 			}
 
-			Sleep(7);
+			Sleep(minMaxSleepTime);
 		}
 
 		std::cout << min << " " << max << std::endl;
@@ -47,7 +52,7 @@ namespace Functions {
 		for (auto now : data->arg)
 		{
 			s += now;
-			Sleep(12);
+			Sleep(averageSleepTime);
 		}
 
 		const double result = static_cast<double>(s) / data->arg.size();
