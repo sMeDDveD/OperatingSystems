@@ -1,15 +1,13 @@
 #include "Functions.h"
 
-
-
-namespace Functions {
-
+namespace Functions
+{
 	static const int minMaxSleepTime = 7;
 	static const int averageSleepTime = 12;
 
 	DWORD WINAPI MinMax(LPVOID lpParam)
 	{
-		auto data = static_cast<Thread::Data<std::vector<int>, std::pair<int, int>>*>(lpParam);
+		auto data = static_cast<Thread::Data<const std::vector<int>&, std::pair<int, int>>*>(lpParam);
 
 		int min = data->arg[0];
 		int max = min;
@@ -17,7 +15,7 @@ namespace Functions {
 		int iMin = 0;
 		int iMax = iMin;
 
-		for (int i = 0; i < data->arg.size(); i++)
+		for (unsigned i = 0; i < data->arg.size(); i++)
 		{
 			const int now = data->arg[i];
 			if (min > now)
@@ -39,14 +37,14 @@ namespace Functions {
 
 		std::cout << min << " " << max << std::endl;
 
-		data->ret = { iMin, iMax };
+		data->ret = {iMin, iMax};
 
 		return 0;
 	}
 
 	DWORD WINAPI Average(LPVOID lpParam)
 	{
-		auto data = static_cast<Thread::Data<std::vector<int>, double>*>(lpParam);
+		auto data = static_cast<Thread::Data<const std::vector<int>&, double>*>(lpParam);
 
 		int s = 0;
 		for (auto now : data->arg)

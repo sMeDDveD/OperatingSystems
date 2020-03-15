@@ -1,26 +1,19 @@
 #include <iostream>
+#include <iterator>
 #include <vector>
 #include "Thread.h"
 #include "Functions.h"
 
 std::vector<int> GetArray()
 {
-	int n;
-
-	std::cout << "Enter array length: " << std::endl;
-	std::cin >> n;
-
-	std::vector<int> arr(n);
+	std::vector<int> arr;
+	
 	std::cout << "Enter elements: " << std::endl;
-
-	for (auto& now : arr)
-	{
-		std::cin >> now;
-	}
+	std::copy(std::istream_iterator<int>(std::cin), std::istream_iterator<int>(),
+		std::inserter(arr, arr.end()));
 
 	return arr;
 }
-
 
 int main()
 {
@@ -28,8 +21,8 @@ int main()
 
 	try
 	{
-		Thread::Data<std::vector<int>, std::pair<int, int>> minMaxData = {arr};
-		Thread::Data<std::vector<int>, double> averageData = {arr};
+		Thread::Data<const std::vector<int>&, std::pair<int, int>> minMaxData = {arr};
+		Thread::Data<const std::vector<int>&, double> averageData = {arr};
 		const Thread min_max(Functions::MinMax, &minMaxData);
 		const Thread average(Functions::Average, &averageData);
 
@@ -41,10 +34,8 @@ int main()
 
 		arr[minMaxData.ret.first] = arr[minMaxData.ret.second] = static_cast<int>(averageData.ret);
 
-		for (auto now : arr)
-		{
-			std::cout << now << " ";
-		}
+		std::copy(arr.cbegin(), arr.cend(),
+			std::ostream_iterator<int>(std::cout, " "));
 
 		std::cout << std::endl;
 	}

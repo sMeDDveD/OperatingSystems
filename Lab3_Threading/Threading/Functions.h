@@ -5,9 +5,8 @@
 #include <iostream>
 #include <vector>
 
-namespace Functions {
-
+namespace Functions
+{
 	DWORD WINAPI MinMax(LPVOID lpParam);
 	DWORD WINAPI Average(LPVOID lpParam);
-
 }

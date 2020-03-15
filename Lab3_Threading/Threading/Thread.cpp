@@ -1,7 +1,5 @@
 #include "Thread.h"
 
-
-
 Thread::Thread(Function f, void* pArgs)
 {
 	hThread = CreateThread(
@@ -20,7 +18,7 @@ Thread::Thread(Function f, void* pArgs)
 
 void Thread::Start() const
 {
-	if (ResumeThread(hThread) == -1)  // NOLINT(clang-diagnostic-sign-compare)
+	if (ResumeThread(hThread) == -1)
 	{
 		throw std::runtime_error("Cannot start thread: " + GetErrorDescription());
 	}
