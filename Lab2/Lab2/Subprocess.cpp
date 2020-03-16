@@ -30,16 +30,18 @@ void Subprocess::CreateSubprocess(bool waiting) {
         if (pid > 0) {
             int status;
             waitpid(pid, &status, 0);
+
+            if (!WIFEXITED(status) || WEXITSTATUS(status) != 0) {
+                throw std::runtime_error(processName + ": error");
+            }
         } else {
             if (execv(processName.c_str(), argv.data()) == -1) {
                 throw std::runtime_error("Unable to exec");
             }
+            exit(0);
         }
     }
 }
-
-
-Subprocess::~Subprocess() = default;
 
 
 std::string Subprocess::GetErrorDescription() {

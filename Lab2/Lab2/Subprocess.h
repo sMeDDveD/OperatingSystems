@@ -36,7 +36,7 @@ public:
 
     void CreateSubprocess(bool waiting = true);
 
-    ~Subprocess();
+    ~Subprocess() = default;
 
 private:
 
