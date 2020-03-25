@@ -15,44 +15,44 @@ namespace Markers
 	// TODO: Wrapper
 	static CRITICAL_SECTION cs;
 	
-	DWORD __stdcall markerFunction(LPVOID lpParam)
+	DWORD __stdcall MarkerFunction(LPVOID lpParam)
 	{
 		const int currentMarker = reinterpret_cast<int>(lpParam);
 
 		std::srand(currentMarker);
-		std::vector<int> marked;
+		std::vector<int> markedElements;
 
 		while (true)
 		{
-			const int idx = std::rand() % arr.size();
+			const int index = std::rand() % arr.size();
 
 			EnterCriticalSection(&cs);
-			if (arr[idx] == 0)
+			if (arr[index] == 0)
 			{
 				Sleep(timeToSleep);
-				arr[idx] = currentMarker + 1;
+				arr[index] = currentMarker + 1;
 				Sleep(timeToSleep);
 
 				LeaveCriticalSection(&cs);
 
-				marked.push_back(idx);
+				markedElements.push_back(index);
 			}
 			else
 			{
 				LeaveCriticalSection(&cs);
-				std::cout << "Thread: " << currentMarker << std::endl <<
-					"Marked elements: " << marked.size() << std::endl <<
-					"Unable to mark: " << idx << std::endl;
+				std::cout << "Thread: " << currentMarker + 1 << std::endl <<
+					"Marked elements: " << markedElements.size() << std::endl <<
+					"Unable to mark: " << index + 1 << std::endl;
 
 				finishEvents[currentMarker].Set();
 
 				HANDLE eventsToWait[] = { stopEvents[currentMarker].GetHandle(), resumeEvent.GetHandle() };
 
-				const int result = WaitForMultipleObjects(2, eventsToWait, false, INFINITE);
+				const int pulsedObject = WaitForMultipleObjects(2, eventsToWait, false, INFINITE);
 
-				if (result == WAIT_OBJECT_0)
+				if (pulsedObject == WAIT_OBJECT_0)
 				{
-					for (auto mark : marked)
+					for (auto mark : markedElements)
 					{
 						arr[mark] = 0;
 					}
@@ -74,7 +74,7 @@ namespace Markers
 
 		for (int i = 0; i < number; i++)
 		{
-			markers[i] = Marker(markerFunction, i);
+			markers[i] = Marker(MarkerFunction, i);
 		}
 	}
 
@@ -130,14 +130,14 @@ namespace Markers
 	int Main()
 	{
 		int numberOfMarkers;
-		int n;
+		int numberOfElements;
 		
 		try
 		{
 			std::cout << "Enter the number of elements: ";
-			std::cin >> n;
+			std::cin >> numberOfElements;
 
-			arr.resize(n, 0);
+			arr.resize(numberOfElements, 0);
 
 			std::cout << "Enter the number of markers: ";
 			std::cin >> numberOfMarkers;
@@ -173,7 +173,7 @@ namespace Markers
 			int markerToStop;
 			std::cin >> markerToStop;
 
-			if (!StopMarker(markerToStop))
+			if (!StopMarker(markerToStop - 1))
 			{
 				std::cout << "Unable to stop this marker" << std::endl;
 			}

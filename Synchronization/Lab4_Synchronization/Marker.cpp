@@ -70,3 +70,19 @@ std::string Marker::GetErrorDescription()
 
 	return retValue;
 }
+
+Marker::Marker(Marker&& other) noexcept: hThread(other.hThread),
+                                         dwThreadID(other.dwThreadID),
+                                         stopped(other.stopped)
+{
+	other.hThread = nullptr;
+}
+
+Marker& Marker::operator=(Marker&& other) noexcept
+{
+	std::swap(hThread, other.hThread);
+	std::swap(dwThreadID, other.dwThreadID);
+	std::swap(stopped, other.stopped);
+
+	return *this;
+}
