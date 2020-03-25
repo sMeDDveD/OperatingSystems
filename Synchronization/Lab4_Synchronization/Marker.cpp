@@ -16,6 +16,23 @@ Marker::Marker(Function f, int number)
 	}
 }
 
+Marker::Marker(Marker&& other) noexcept
+	: hThread(other.hThread),
+	dwThreadID(other.dwThreadID),
+	stopped(other.stopped)
+{
+	other.hThread = nullptr;
+}
+
+Marker& Marker::operator=(Marker&& other) noexcept
+{
+	std::swap(hThread, other.hThread);
+	std::swap(dwThreadID, other.dwThreadID);
+	std::swap(stopped, other.stopped);
+
+	return *this;
+}
+
 void Marker::Start() const
 {
 	if (ResumeThread(hThread) == -1)
