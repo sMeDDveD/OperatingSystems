@@ -11,18 +11,9 @@ public:
 	Event(bool isManual = true, bool state = false);
 
 
-	Event(Event&& other) noexcept
-		: hEvent(other.hEvent)
-	{
-		other.hEvent = nullptr;
-	}
+	Event(Event&& other) noexcept;
 
-	Event& operator=(Event other)
-	{
-		std::swap(hEvent, other.hEvent);
-		other.hEvent = nullptr;
-		return *this;
-	}
+	Event& operator=(Event other);
 
 	HANDLE GetHandle() const;
 	bool Pulse() const;

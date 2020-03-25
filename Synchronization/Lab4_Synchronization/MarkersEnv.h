@@ -11,7 +11,7 @@ namespace Markers
 {
 	const int timeToSleep = 5;
 
-	DWORD WINAPI MarkerFunction(LPVOID lpParam);
+	DWORD WINAPI markerFunction(LPVOID lpParam);
 
 	void CreateMarkers(int number);
 	bool ResumeMarkers();

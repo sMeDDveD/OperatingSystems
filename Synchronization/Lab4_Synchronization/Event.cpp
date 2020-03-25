@@ -11,18 +11,6 @@ Event::Event(bool isManual, bool state)
 	}
 }
 
-Event::Event(Event&& other) noexcept: hEvent(other.hEvent)
-{
-	other.hEvent = nullptr;
-}
-
-Event& Event::operator=(Event other)
-{
-	std::swap(hEvent, other.hEvent);
-	other.hEvent = nullptr;
-	return *this;
-}
-
 HANDLE Event::GetHandle() const
 {
 	return hEvent;
