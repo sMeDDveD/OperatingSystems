@@ -5,21 +5,8 @@
 
 #include "../Reciever/Event.h"
 #include "../Reciever/Constants.h"
+#include "../Reciever/Mutex.h"
 
-HANDLE GetMutex()
-{
-    HANDLE hMutex = OpenMutex(
-		SYNCHRONIZE,
-		false,
-		Constants::fileMutexName.c_str());
-
-    if (hMutex == nullptr)
-    {
-		throw std::exception("Unable to open Mutex");
-    }
-
-	return hMutex;
-}
 
 int GetNumberOfRecords(const std::string& filename)
 {
@@ -51,7 +38,7 @@ int main(int argc, char* argv[])
 		std::to_string(GetCurrentProcessId()));
 	cEvent.Set();
 
-	HANDLE hMutex = GetMutex();
+	Mutex mtx = Mutex::Open(Constants::fileMutexName);
 
 	std::string choice = "Y";
     while (true)
@@ -61,7 +48,7 @@ int main(int argc, char* argv[])
 		std::cin.ignore();
 
 		if (choice == "Y") {
-			WaitForSingleObject(hMutex, INFINITE);
+			mtx.Wait();
 
 			char message[Constants::messageLength];
 			std::cout << "Enter the message: " << std::endl;
@@ -74,16 +61,16 @@ int main(int argc, char* argv[])
 
                 // Semaphore?
 				while (!TryToWrite(filename, numberOfRecords, message)) {
-					ReleaseMutex(hMutex);
+					mtx.Release();
 					Sleep(Constants::relaxTime);
 					std::cout << "..." << std::endl;
-					WaitForSingleObject(hMutex, INFINITE);
+					mtx.Wait();
 				}
 
 				std::cout << "Message was sent" << std::endl;
             }
 			cEvent.Set();
-			ReleaseMutex(hMutex);
+			mtx.Release();
 		}
 		else
 		{

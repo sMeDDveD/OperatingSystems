@@ -9,20 +9,8 @@
 #include "Subprocess.h"
 #include "Constants.h"
 #include "Event.h"
+#include "Mutex.h"
 
-
-HANDLE GetMutex()
-{
-    const HANDLE hMutex = CreateMutex(
-		nullptr,
-		FALSE,
-		Constants::fileMutexName.c_str());
-    if (hMutex == nullptr)
-    {
-		throw std::runtime_error("Unable to get mutex");
-    }
-	return hMutex;
-}
 
 void ResetEvents(std::vector<Event>& events)
 {
@@ -107,7 +95,7 @@ int main()
 
 		std::vector<Subprocess> senders;
 		std::vector<Event> sendersEvents;
-		HANDLE hMutex = GetMutex();
+		Mutex mtx(Constants::fileMutexName);
 		CreateFile(filename);
 
         for (auto i = 0; i < numberOfSenders; ++i)
@@ -137,7 +125,7 @@ int main()
 			std::cin.ignore();
 
 			if (choice == "Y") {
-				WaitForSingleObject(hMutex, INFINITE);
+				mtx.Wait();
 				std::string message;
 				if (TryToRead(filename, message))
 				{
@@ -147,23 +135,22 @@ int main()
 				else {
 					std::cout << "Buffer is empty" << std::endl;
 					std::cout << "Waiting for some messages.." << std::endl;
-					ReleaseMutex(hMutex);
+					mtx.Release();
 					WaitForSenders(sendersEvents, false);
 
-					WaitForSingleObject(hMutex, INFINITE);
+					mtx.Wait();
 
 					std::cout << "Message: " << std::endl;
 					std::cout << CycleRead(filename) << std::endl;
 				}
-
-				ReleaseMutex(hMutex);
+				ResetEvents(sendersEvents);
+				mtx.Release();
 			}
 			else
 			{
 				break;
 			}
 		}
-
 	}
     catch (const std::exception& e)
 	{
