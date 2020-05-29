@@ -7,7 +7,7 @@
 
 namespace Utils
 {
-	void PrintFile(const std::string& filename);
-	void PrintBinary(const std::string& filename, int numberOfRecords);
-	void WaitForClients(const std::vector<Thread>& clients, bool all = true);
+    void PrintFile(const std::string& filename);
+    void PrintBinary(const std::string& filename, int numberOfRecords);
+    void WaitForClients(const std::vector<Thread>& clients, bool all = true);
 }

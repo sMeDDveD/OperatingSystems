@@ -4,21 +4,22 @@
 
 namespace Constants
 {
-	const std::string pipePrefix = R"(\\.\pipe\mynamedpipe)";
+    const std::string pipeName = R"(\\.\pipe\mynamedpipe)";
 }
 
 
 struct EmployeeMessage
 {
-	EmployeeMessage() = default;
+    EmployeeMessage() = default;
+
     enum class Status
     {
         OK,
         FAILED
     };
 
-	Status status;
-	Employee employee;
+    Status status;
+    Employee employee;
 
 
     EmployeeMessage(Status status, const Employee& employee)
@@ -30,7 +31,8 @@ struct EmployeeMessage
 
 struct ControlMessage
 {
-	ControlMessage() = default;
+    ControlMessage() = default;
+
     enum class Type
     {
         READ,
@@ -38,8 +40,8 @@ struct ControlMessage
         CLOSE
     };
 
-	Type type;
-	int id;
+    Type type;
+    int id;
 
 
     ControlMessage(Type type, int id)

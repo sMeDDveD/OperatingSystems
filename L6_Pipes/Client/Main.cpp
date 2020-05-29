@@ -37,9 +37,9 @@ void Read(const NamedPipe& pipe)
     {
         std::cout << "Employee: " << std::endl;
         std::cout << answer.employee << std::endl;
-		std::cout << "End?" << std::endl;
-		system("pause");
-		pipe.Write<ControlMessage>(ControlMessage(ControlMessage::Type::CLOSE, {}));
+        std::cout << "End?" << std::endl;
+        system("pause");
+        pipe.Write<ControlMessage>(ControlMessage(ControlMessage::Type::CLOSE, {}));
     }
     else
     {
@@ -60,7 +60,7 @@ void Write(const NamedPipe& pipe)
         std::cout << "Current employee: " << std::endl;
         std::cout << answer.employee << std::endl;
 
-        auto e = EmployeeIO::Read(std::cin, std::cout);
+        const auto e = EmployeeIO::Read(std::cin, std::cout);
         pipe.Write<EmployeeMessage>({EmployeeMessage::Status::OK, e});
     }
     else

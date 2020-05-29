@@ -4,12 +4,12 @@
 
 class Thread final
 {
-	HANDLE hThread{};
-	DWORD dwThreadID{};
+    HANDLE hThread{};
+    DWORD dwThreadID{};
 
-	static std::string GetErrorDescription();
+    static std::string GetErrorDescription();
 public:
-	using Function = LPTHREAD_START_ROUTINE;
+    using Function = LPTHREAD_START_ROUTINE;
 
 
     Thread(const Thread& other) = delete;
@@ -18,19 +18,19 @@ public:
 
     Thread& operator=(Thread&& other) noexcept;
 
-	template <typename In>
-	struct Data
-	{
-		In arg;
-	};
+    template <typename In>
+    struct Data
+    {
+        In arg;
+    };
 
-	explicit Thread(Function f, void* pArgs);
+    explicit Thread(Function f, void* pArgs);
 
-	void Start() const;
-	void Join() const;
+    void Start() const;
+    void Join() const;
 
 
     HANDLE GetHandle() const;
-	DWORD GetDwThreadId() const;
-	~Thread();
+    DWORD GetDwThreadId() const;
+    ~Thread();
 };

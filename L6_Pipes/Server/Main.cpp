@@ -59,20 +59,19 @@ DWORD _stdcall ClientHandler(LPVOID params)
             }
             if (mapper[id].IsReadable())
             {
-				{
-					std::lock_guard<std::mutex> lock(m);
-					mapper[id].SetState(Record::Status::READ);
-					mapper[id].AddReader();
-				}
+                {
+                    std::lock_guard<std::mutex> lock(m);
+                    mapper[id].SetState(Record::Status::READ);
+                    mapper[id].AddReader();
+                }
                 sendMsg = CreateAnswerMessageByID(id);
                 pipe->Write<EmployeeMessage>(sendMsg);
                 if (pipe->Read<ControlMessage>().type == ControlMessage::Type::CLOSE)
                 {
-
-					{
-						std::lock_guard<std::mutex> lock(m);
-						mapper[id].ReleaseReader();
-					}
+                    {
+                        std::lock_guard<std::mutex> lock(m);
+                        mapper[id].ReleaseReader();
+                    }
                 }
             }
             else
@@ -82,11 +81,11 @@ DWORD _stdcall ClientHandler(LPVOID params)
         }
         else if (recievedMsg.type == ControlMessage::Type::WRITE)
         {
-			m.lock();
+            m.lock();
             if (mapper[id].IsWritable())
             {
                 mapper[id].SetState(Record::Status::WRITE);
-				m.unlock();
+                m.unlock();
 
                 const int offset = mapper[id].GetOffset();
                 sendMsg = CreateAnswerMessageByID(id);
@@ -106,7 +105,7 @@ DWORD _stdcall ClientHandler(LPVOID params)
             }
             else
             {
-				m.unlock();
+                m.unlock();
                 pipe->Write<EmployeeMessage>(EmployeeMessage(EmployeeMessage::Status::FAILED, {}));
             }
         }
@@ -150,12 +149,11 @@ int main()
     std::vector<NamedPipe> pipes(numberOfClients);
     for (int i = 0; i < numberOfClients; ++i)
     {
-        std::string pipeName = Constants::pipePrefix;
 
-        pipes[i] = NamedPipe(pipeName, sizeof(EmployeeMessage));
+        pipes[i] = NamedPipe(Constants::pipeName, sizeof(EmployeeMessage));
 
         Subprocess client("Client");
-        client.SetArgs(pipeName);
+        client.SetArgs(Constants::pipeName);
         client.CreateSubprocess(false);
 
         if (pipes[i].Connect())
@@ -174,6 +172,5 @@ int main()
     Utils::WaitForClients(clientsThreads);
     std::cout << std::endl << "Finale: " << std::endl;
     Utils::PrintBinary(filename, numberOfRecords);
-    system("pause");
     return 0;
 }
